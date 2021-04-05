@@ -46,6 +46,14 @@ function App(){
     }
   ]);
 
+  const [state, setState] = useState({
+    fullname: 'Kennedy Mugera Karimi',
+    email: 'kennedymugera@gmail.com',
+    phone: '0702466037',
+    decodedClaims: { uid: '3754289734' },
+    
+  });
+
   const addTodo = (text) => {
     const newTodos = [...todos, { text }];
     setTodos(newTodos);
