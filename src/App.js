@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
 
 function Todo({ todo, index, completeTodo, removeTodo}) {
@@ -66,6 +66,13 @@ function App(){
     phone: '0702466037',
     decodedClaims: { uid: '30533847' },
     locations: [0,1,2,3,4,5]
+  });
+
+  /*Similar to componentDidMount and componentDidUpdate.
+    You can use more than one useEffect hook in a single functional component.
+  */
+  useEffect( () => {
+    document.title = 'TODO App';
   });
 
   const addTodo = (text) => {
