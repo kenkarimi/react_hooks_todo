@@ -32,11 +32,28 @@ function TodoForm({ addTodo }) {
 
 function User({ state, changeState, changeStateBack }) {
 
-  useEffect( () => { //Executes everytime state is updated.
-    console.log('state has just updated...');
+  useEffect( () => { //This is the equivalent of a componentDidUpdate. Executes everytime the component changes (props or state changes).
+    console.log('state/props has just updated...');
     //console.log(state);
     //changeStateBack();
+    return () => {/*This runs only after the component unmounts(this.mount === false)*/
+      console.log('this.mount is now false');
+    }
   });
+
+  /*NB: Regarding Mounting/Unmounting
+  If a component existed but no longer will, it's considered unmounted and given the chance to do so and clean up with componentWillUnmount. e.g. when details change from Kennedy to Ephraim after change state is clicked, an unmount happens after the click.
+  The reverse is true. If a component didn't exist but now does, it's considered ready to mount and given a chance to do so with a constructor/componentWillMount.
+  In class components, I've issually used a constructor to mount comonents in the past.
+  */
+
+  useEffect( () => { /*This is the equivalent of a componentDidUpdate and executes only once after the component mounts and then each time the specific prop/state we're watchiing for(in this case 'state') changes.*/
+    console.log('The \'state\' object we\'re watching for in this particular useEffect has changed.')
+  }, [state]);
+
+  useEffect( () => { /*This is the equivalent of a componentDidUpdate and executes only once after the component mounts and then each time the specific prop/state we're watchiing for(in this case 'state.fullname') changes.*/
+    console.log('The \'state.fullname\' object we\'re watching for in this particular useEffect has changed.')
+  }, [state]);
 
   return (
     <div className="broad_state">
@@ -75,13 +92,17 @@ function App(){
     locations: [0,1,2,3,4,5]
   });
 
-  /*Similar to componentDidMount and componentDidUpdate.
+  /*Similar to componentDidMount, componentDidUpdate and componentWillUnmount combined.
     You can use more than one useEffect hook in a single functional component.
   */
-  useEffect( () => {
+  useEffect( () => { /*This is the equivalent of a componentDidMount and executes only once after the component mounts. Notice that the second variable in the useEffect is an empty array, which basically means we're not watching for any state/prop varilable. This is what makes it a componentDidMount.*/
     document.title = 'TODO App';
     console.log('componentDidMount use effect updated again...');
-  });
+  }, []);
+
+  useEffect( () => { /*This is the equivalent of a componentDidUpdate and executes only once after the component mounts and then each time the specific prop/state we're watchiing for(in this case 'todos') changes.*/
+    console.log('The \'todos\' object we\'re watching for in this particular useEffect has changed.')
+  }, [todos]);
 
   const addTodo = (text) => {
     const newTodos = [...todos, { text }];
@@ -109,7 +130,7 @@ function App(){
      The state does change as expected but it doesn't update on the interface for whatever reason(state seems to change without triggering an interface update)
     */
     
-    let updateable_state = { ...state }; 
+    let updateable_state = { ...state };
 
     updateable_state.fullname = 'Ephraim Wachira';
     updateable_state.email = 'ephywachira@gmail.com';
