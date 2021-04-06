@@ -30,7 +30,14 @@ function TodoForm({ addTodo }) {
   )
 }
 
-function User({ state, changeState }) {
+function User({ state, changeState, changeStateBack }) {
+
+  useEffect( () => { //Executes everytime state is updated.
+    console.log('state has just updated...');
+    //console.log(state);
+    //changeStateBack();
+  });
+
   return (
     <div className="broad_state">
       <div>
@@ -73,6 +80,7 @@ function App(){
   */
   useEffect( () => {
     document.title = 'TODO App';
+    console.log('componentDidMount use effect updated again...');
   });
 
   const addTodo = (text) => {
@@ -125,12 +133,21 @@ function App(){
       email: 'pst.nancynyaguthii@gmail.com',
       phone: '0724912647',
       decodedClaims: {uid: '1063058'}
-    },
-      console.log('Updated state...'),
-      console.log(state)
-    );
+    });
     console.log('Updated state...');
     console.log(state);*/
+  }
+
+  const changeStateBack = () => {
+    setState({
+      ...state,
+      fullname: 'Updated Kennedy Mugera Karimi',
+      email: 'kennedymugera@gmail.com',
+      phone: '0702466037',
+      decodedClaims: {uid: '30533847'}
+    });
+    console.log('Updated state back to original...');
+    console.log(state);
   }
 
   return (
@@ -153,6 +170,7 @@ function App(){
           <User
             state={state}
             changeState={changeState}
+            changeStateBack={changeStateBack}
           />
       </div>
     </div>
