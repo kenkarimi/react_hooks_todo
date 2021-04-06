@@ -30,6 +30,20 @@ function TodoForm({ addTodo }) {
   )
 }
 
+function User({ state, changeState }) {
+  return (
+    <div className="broad_state">
+      <div>
+        <button onClick={() => changeState()}>Change State</button>
+      </div>
+      <p>{ state.fullname }</p><br/>
+      <p>{ state.email }</p><br/>
+      <p>{ state.phone }</p><br/>
+      <p>{ state.decodedClaims.uid }</p><br/>
+    </div>
+  )
+}
+
 function App(){
   const [todos, setTodos] = useState([
     {
@@ -50,8 +64,8 @@ function App(){
     fullname: 'Kennedy Mugera Karimi',
     email: 'kennedymugera@gmail.com',
     phone: '0702466037',
-    decodedClaims: { uid: '3754289734' },
-    
+    decodedClaims: { uid: '30533847' },
+    locations: [0,1,2,3,4,5]
   });
 
   const addTodo = (text) => {
@@ -71,6 +85,47 @@ function App(){
     setTodos(newTodos);
   }
 
+  const changeState = () => {
+    console.log('Initial state...');
+    console.log(state);
+
+    /*you *must* use spread operator to get everything from the initial state onto a new updateable state object.
+     This (updateable_state = state) wouldn't have completely worked because after you update the updateable state with Ephraims details,
+     The state does change as expected but it doesn't update on the interface for whatever reason(state seems to change without triggering an interface update)
+    */
+    
+    let updateable_state = { ...state }; 
+
+    updateable_state.fullname = 'Ephraim Wachira';
+    updateable_state.email = 'ephywachira@gmail.com';
+    updateable_state.phone = '0722639870';
+    updateable_state.decodedClaims.uid = 'NOT AVAILABLE';
+    updateable_state.locations = [6,7,8,9,10];
+
+    //Appropriate for use in situations where you *need* to use the state immediately after update.
+    //If you need to use the state immediately after update use the 'updateable_state' variable since the 'state' variable is updated asynchronously and isn't available immediately.
+
+    setState(updateable_state);
+    console.log('Updated state...');
+    console.log(state);
+
+    //Alternatively, you could just do this:
+    //Appropriate for use in situations where you don't need to use the state immediately after update.
+    
+    /*setState({
+      ...state,
+      fullname: 'Nancy Nyaguthii',
+      email: 'pst.nancynyaguthii@gmail.com',
+      phone: '0724912647',
+      decodedClaims: {uid: '1063058'}
+    },
+      console.log('Updated state...'),
+      console.log(state)
+    );
+    console.log('Updated state...');
+    console.log(state);*/
+  }
+
   return (
     <div className="app">
       <div className="todo-list">
@@ -85,7 +140,13 @@ function App(){
                 />
             ))
           }
-          <TodoForm addTodo={addTodo}/>
+          <TodoForm 
+            addTodo={addTodo}
+          />
+          <User
+            state={state}
+            changeState={changeState}
+          />
       </div>
     </div>
   );
