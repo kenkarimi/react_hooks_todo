@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
 import './App.css';
 
 function Todo({ todo, index, completeTodo, removeTodo}) {
@@ -30,7 +30,34 @@ function TodoForm({ addTodo }) {
   )
 }
 
+/*
+The Context API is a component structure provided by the React framework, which enables us to share specific forms of data across all levels of the application.
+ It’s aimed at solving the problem of prop drilling.
+ “Prop drilling (also called “threading”) refers to the process you have to go through to get data to parts of the React Component tree.” – Kent C. Dodds.
+ Before the Context API, we could use a module to solve this, which led to the increasing popularity of state management libraries like Redux.
+ Libraries like Redux allows you to get data from the store easily, anywhere in the tree. Example below.
+*/
+
+/*
+  The Context API is useful for sharing data that can be considered global, such as the currently authenticated user, the theme settings for the application, and more.
+  In situations where we have these types of data, we can use the Context API and we don’t necessarily have to use extra modules.
+*/
+
+const themes = {
+  light: {
+    foreground: "#25AF94",
+    background: "#ED3237"
+  },
+  dark: {
+    foreground: "#ffffff",
+    background: "#222222"
+  }
+};
+
+const ThemeContext = React.createContext(themes.light);
+
 function User({ state, changeState, changeStateBack }) {
+  const theme = useContext(ThemeContext);
 
   useEffect( () => { //This is the equivalent of a componentDidUpdate. Executes everytime the component changes (props or state changes).
     console.log('state/props has just updated...');
@@ -58,7 +85,7 @@ function User({ state, changeState, changeStateBack }) {
   return (
     <div className="broad_state">
       <div>
-        <button onClick={() => changeState()}>Change State</button>
+        <button onClick={() => changeState()} style={{ background: theme.background, color: theme.foreground }}>Change State</button>
       </div>
       <p>{ state.fullname }</p><br/>
       <p>{ state.email }</p><br/>
@@ -66,6 +93,30 @@ function User({ state, changeState, changeStateBack }) {
       <p>{ state.decodedClaims.uid }</p><br/>
     </div>
   )
+}
+
+/*useRef allows you to create a reference to and allows you to manipulate a DOM element*/
+function FocusForm() {
+  const theme = useContext(ThemeContext);
+  const focusInput = useRef(null);
+
+  const focusOnTextBox = (e) => {
+    e.preventDefault();
+    focusInput.current.focus();
+  }
+
+  const funButton = (e, arg) => {
+    e.preventDefault();
+    console.log('This button has been CLICKED '+ arg);
+  }
+
+  return (
+    <div>
+      <input type="text" ref={focusInput} className="input" />
+      <button onClick={focusOnTextBox} style={{ background: theme.background, color: theme.foreground }}>Ref Focus Button</button>
+      <button onClick={(e) => funButton(e, 'Argument also passed')} style={{ background: theme.background, color: theme.foreground }}>Fun Argument Button</button>
+    </div>
+  );
 }
 
 function App(){
@@ -192,6 +243,8 @@ function App(){
             state={state}
             changeState={changeState}
             changeStateBack={changeStateBack}
+          />
+          <FocusForm
           />
       </div>
     </div>
