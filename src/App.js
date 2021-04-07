@@ -53,7 +53,7 @@ function User({ state, changeState, changeStateBack }) {
 
   useEffect( () => { /*This is the equivalent of a componentDidUpdate and executes only once after the component mounts and then each time the specific prop/state we're watchiing for(in this case 'state.fullname') changes.*/
     console.log('The \'state.fullname\' object we\'re watching for in this particular useEffect has changed.')
-  }, [state]);
+  }, [state.fullname]); //Note: You can only watch for changes in a specific property in an object if you changed the state using the second alternative method(without the updateable_state variable)
 
   return (
     <div className="broad_state">
@@ -130,7 +130,7 @@ function App(){
      The state does change as expected but it doesn't update on the interface for whatever reason(state seems to change without triggering an interface update)
     */
     
-    let updateable_state = { ...state };
+    /*let updateable_state = { ...state };
 
     updateable_state.fullname = 'Ephraim Wachira';
     updateable_state.email = 'ephywachira@gmail.com';
@@ -143,20 +143,20 @@ function App(){
 
     setState(updateable_state);
     console.log('Updated state...');
-    console.log(state);
+    console.log(state);*/
 
     //Alternatively, you could just do this:
     //Appropriate for use in situations where you don't need to use the state immediately after update.
     
-    /*setState({
+    setState({
       ...state,
-      fullname: 'Nancy Nyaguthii',
+      //fullname: 'Nancy Nyaguthii',
       email: 'pst.nancynyaguthii@gmail.com',
       phone: '0724912647',
       decodedClaims: {uid: '1063058'}
     });
     console.log('Updated state...');
-    console.log(state);*/
+    console.log(state);
   }
 
   const changeStateBack = () => {
