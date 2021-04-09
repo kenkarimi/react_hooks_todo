@@ -14,6 +14,7 @@ function Todo({ todo, index, completeTodo, removeTodo}) {
 }
 
 function TodoForm({ addTodo }) {
+
   const [value, setValue] = useState('');
 
   const handleSubmit = (e) => {
@@ -95,14 +96,26 @@ function User({ state, changeState, changeStateBack }) {
   )
 }
 
+/*A custom Hook is a JavaScript function whose name starts with ”use” and that may call other Hooks.*/
+/*raditionally in React, we’ve had two popular ways to share stateful logic between components: render props and higher-order components.
+ We will now look at how Hooks solve many of the same problems without forcing you to add more components to the tree.
+*/
+/*Building your own Hooks lets you extract component logic into reusable functions.*/
+function useFocusForm(context, reference) {
+  const theme = useContext(context);
+  const focusInput = useRef(reference);
+
+  return { theme: theme, focusInput: focusInput }
+}
+
 /*useRef allows you to create a reference to and allows you to manipulate a DOM element*/
 function FocusForm() {
-  const theme = useContext(ThemeContext);
-  const focusInput = useRef(null);
+
+  const results = useFocusForm(ThemeContext, null);
 
   const focusOnTextBox = (e) => {
     e.preventDefault();
-    focusInput.current.focus();
+    results.focusInput.current.focus();
   }
 
   const funButton = (e, arg) => {
@@ -112,9 +125,9 @@ function FocusForm() {
 
   return (
     <div>
-      <input type="text" ref={focusInput} className="input" />
-      <button onClick={focusOnTextBox} style={{ background: theme.background, color: theme.foreground }}>Ref Focus Button</button>
-      <button onClick={(e) => funButton(e, 'Argument also passed')} style={{ background: theme.background, color: theme.foreground }}>Fun Argument Button</button>
+      <input type="text" ref={results.focusInput} className="input" />
+      <button onClick={focusOnTextBox} style={{ background: results.theme.background, color: results.theme.foreground }}>Ref Focus Button</button>
+      <button onClick={(e) => funButton(e, 'Argument also passed')} style={{ background: results.theme.background, color: results.theme.foreground }}>Fun Argument Button</button>
     </div>
   );
 }
