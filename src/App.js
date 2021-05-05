@@ -223,6 +223,11 @@ function App(){
     console.log(state);
   }
 
+  useEffect( () => {
+    console.log('Updated again state...');
+    console.log(state);
+  }, [state.email]);
+
   const changeStateBack = () => {
     setState({
       ...state,
