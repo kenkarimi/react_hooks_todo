@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useRef } from 'react';
+import React, { useState, useEffect, createContext, useContext, useRef, useReducer } from 'react';
 import './App.css';
 
 function Todo({ todo, index, completeTodo, removeTodo}) {
@@ -55,7 +55,7 @@ const themes = {
   }
 };
 
-const ThemeContext = React.createContext(themes.light);
+const ThemeContext = createContext(themes.light);
 
 function User({ state, changeState, changeStateBack }) {
   const theme = useContext(ThemeContext);
@@ -67,7 +67,7 @@ function User({ state, changeState, changeStateBack }) {
     return () => {/*This runs only after the component unmounts(this.mount === false)*/
       console.log('this.mount is now false');
     }
-  });
+  }, []);
 
   /*NB: Regarding Mounting/Unmounting
   If a component existed but no longer will, it's considered unmounted and given the chance to do so and clean up with componentWillUnmount. e.g. when details change from Kennedy to Ephraim after change state is clicked, an unmount happens after the click.
@@ -97,7 +97,7 @@ function User({ state, changeState, changeStateBack }) {
 }
 
 /*A custom Hook is a JavaScript function whose name starts with ”use” and that may call other Hooks.*/
-/*raditionally in React, we’ve had two popular ways to share stateful logic between components: render props and higher-order components.
+/*aditionally in React, we’ve had two popular ways to share stateful logic between components: render props and higher-order components.
  We will now look at how Hooks solve many of the same problems without forcing you to add more components to the tree.
 */
 /*Building your own Hooks lets you extract component logic into reusable functions.*/
@@ -132,7 +132,69 @@ function FocusForm() {
   );
 }
 
-function App(){
+const reducer = (state, action) => {
+  if(action.type === 'INCREMENT_AGE'){ //can alternatively use a switch statement as seen here: https://react.dev/reference/react/useReducer
+    return {
+      age: state.age + 1,
+      name: state.name
+    };
+  } else if(action.type === 'CHANGE_NAME'){
+    return {
+      ...state, //You can also use the spread operator (...state) if there are to many other key-value pairs and you don't want to include them all.
+      name: action.nextName
+    };
+  }
+  throw Error('Unknown Action');
+}
+
+const Counter = () => {
+
+  const [state, dispatch] = useReducer(reducer, { age: 29, name: 'Jane Doe' });
+
+  const handleClick = () => {
+    dispatch({ type: 'INCREMENT_AGE'});
+  }
+
+  const handleInputChange = (e) => {
+    dispatch({ type: 'CHANGE_NAME', nextName: e.target.value })
+  }
+
+  return (
+    <div>
+      <h1>Hello! Are you {`${state.age}`}? Is your name {`${state.name}`}?</h1>
+      <button onClick={handleClick}>Increment Age</button>
+      <input type="text" onChange={handleInputChange} />
+    </div>
+  )
+}
+
+const higherOrderComponent = (Child, permission) => {
+
+  const NewComponent = (props) => { //has to be either a function component beginning with a capital letter or a custom hook beginning with 'use'
+    const [counter, setCounter] = useState(1);
+
+    if(permission === false){
+      return (
+        <div>
+          <h1>You don't have permission to access this route. {''+ counter}</h1>
+          <br/>
+          <button onClick={() => setCounter(counter + 1)}>Increment Counter</button>
+        </div>
+      );
+    } else if(permission === true){
+      return ( //message is sent down as a prop to the child component being rendered. We deconstruct it thereApp({ name }), but could also have used props.message
+        <Child
+          message="You have permission to access this route."
+          {...props} //In case there were any othe props passed to the App function component(like so <App name='Doe' />) from another component, this makes sure they aren't forgotten and pass back to the NewComponent that's about to be returned. This step is necessary because App is being passed to a HOC, otherwise it wouldn't be necessary.
+        />
+      );
+    } 
+  }
+
+  return NewComponent;
+}
+
+function App({ message }){
   const [todos, setTodos] = useState([
     {
       text: 'Learn about react',
@@ -262,11 +324,13 @@ function App(){
             changeState={changeState}
             changeStateBack={changeStateBack}
           />
-          <FocusForm
-          />
+          <FocusForm />
+          <Counter />
+          <br/>
+          <p1>{message}</p1>
       </div>
     </div>
   );
 }
 
-export default App;
+export default higherOrderComponent(App, true); //boolean permission to access route.
