@@ -81,7 +81,7 @@ function User({ state, changeState, changeStateBack }) {
 
   useEffect( () => { /*This is the equivalent of a componentDidUpdate and executes only once after the component mounts and then each time the specific prop/state we're watchiing for(in this case 'state.fullname') changes.*/
     console.log('The \'state.fullname\' object we\'re watching for in this particular useEffect has changed.')
-  }, [state.fullname]); //Note: You can only watch for changes in a specific property in an object if you changed the state using the second alternative method(without the updateable_state variable)
+  }, [state.fullname]); //Note: You can only watch for changes in a specific property in an object if you changed the state using the second alternative method (without the updateable_state variable)
 
   return (
     <div className="broad_state">
